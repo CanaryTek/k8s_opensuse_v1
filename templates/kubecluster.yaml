@@ -224,6 +224,12 @@ parameters:
       fill in for Kubernetes config file
     default: "password"
 
+  tenant_domain:
+    type: string
+    description: >
+      tenant name
+    default: "Default"
+
   tenant_name:
     type: string
     description: >
@@ -573,6 +579,7 @@ resources:
           username: {get_param: username}
           password: {get_param: password}
           tenant_name: {get_param: tenant_name}
+          tenant_domain: {get_param: tenant_domain}
           kubernetes_port: {get_param: kubernetes_port}
           tls_disabled: {get_param: tls_disabled}
           secgroup_base_id: {get_resource: secgroup_base}
@@ -649,6 +656,10 @@ resources:
           trustee_password: {get_param: trustee_password}
           trustee_domain_id: {get_param: trustee_domain_id}
           trust_id: {get_param: trust_id}
+          username: {get_param: username}
+          password: {get_param: password}
+          tenant_name: {get_param: tenant_name}
+          tenant_domain: {get_param: tenant_domain}
 
 outputs:
 

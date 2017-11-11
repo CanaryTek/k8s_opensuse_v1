@@ -191,6 +191,11 @@ parameters:
     description: >
       tenant name
 
+  tenant_domain:
+    type: string
+    description: >
+      tenant domain
+
   kube_master_id:
     type: string
     description: ID of for kubernetes master.
@@ -256,6 +261,7 @@ resources:
             "$USERNAME": {get_param: username}
             "$PASSWORD": {get_param: password}
             "$TENANT_NAME": {get_param: tenant_name}
+            "$TENANT_DOMAIN": {get_param: tenant_domain}
             "$CLUSTER_SUBNET": {get_param: fixed_subnet}
             "$TLS_DISABLED": {get_param: tls_disabled}
             "$KUBE_VERSION": {get_param: kube_version}

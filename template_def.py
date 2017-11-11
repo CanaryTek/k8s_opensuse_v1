@@ -56,7 +56,7 @@ class JeOSK8sTemplateDefinition(k8s_template_def.K8sTemplateDefinition):
             extra_params['kubernetes_port'] = 8080
 
         label_list = ['flannel_network_cidr', 'flannel_backend',
-                      'flannel_network_subnetlen', 'registry_url']
+                      'flannel_network_subnetlen', 'registry_url', 'username', 'password']
         for label in label_list:
             extra_params[label] = cluster_template.labels.get(label)
 

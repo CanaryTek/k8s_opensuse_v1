@@ -220,6 +220,22 @@ parameters:
     description: id of the trust which is used by the trustee
     hidden: true
 
+  username:
+    type: string
+    description: user account
+
+  password:
+    type: string
+    description: user password
+
+  tenant_name:
+    type: string
+    description: tenant name
+
+  tenant_domain:
+    type: string
+    description: tenant domain
+
 resources:
 
   minion_wait_handle:
@@ -281,6 +297,10 @@ resources:
             "$TRUSTEE_USERNAME": {get_param: trustee_username}
             "$TRUSTEE_PASSWORD": {get_param: trustee_password}
             "$TRUST_ID": {get_param: trust_id}
+            "$USERNAME": {get_param: username}
+            "$PASSWORD": {get_param: password}
+            "$TENANT_NAME": {get_param: tenant_name}
+            "$TENANT_DOMAIN": {get_param: tenant_domain}
 
   write_kubeconfig:
     type: OS::Heat::SoftwareConfig
