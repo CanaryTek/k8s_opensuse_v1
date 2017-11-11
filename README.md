@@ -73,7 +73,7 @@ This image is created using openSUSE's kiwi and OBS and is hosted at https://bui
   * Download the Kubernetes 1.7.7 image
 
 ```
-wget https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap-42.3-Magnum-Kubernetes-1.7.x86_64-1.42.3-mit-Build2.1.qcow2
+wget "https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap-42.3-Magnum-Kubernetes-1.7.x86_64-1.42.3-mit-Build2.2.qcow2"
 ```
 
   * Create the image
