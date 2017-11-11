@@ -24,11 +24,12 @@ sed -i '
     /^KUBE_MASTER=/ s|=.*|="--master='"$KUBE_MASTER_URI"'"|
 ' /etc/kubernetes/config
 
+# NOTE! No KUBELET_API_SERVER in default file for kubernetes 1.7
 sed -i '
     /^KUBELET_ADDRESS=/ s/=.*/="--address=0.0.0.0"/
     /^KUBELET_HOSTNAME=/ s/=.*/=""/
     /^KUBELET_API_SERVER=/ s|=.*|="--api-servers='"$KUBE_MASTER_URI"'"|
-    /^KUBELET_ARGS=/ s|=.*|="--node-ip='"$myip"' --container-runtime=docker --config=/etc/kubernetes/manifests '"$KUBE_CONFIG"'"|
+    /^KUBELET_ARGS=/ s|=.*|="--node-ip='"$myip"' --api-servers='"$KUBE_MASTER_URI"' --container-runtime=docker '"$KUBE_CONFIG"' --cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"|
 ' /etc/kubernetes/kubelet
 
 sed -i '
@@ -37,6 +38,16 @@ sed -i '
 
 cat >> /etc/environment <<EOF
 KUBERNETES_MASTER=$KUBE_MASTER_URI
+EOF
+
+# Generate a the configuration for Kubernetes services to talk to OpenStack
+cat > /etc/sysconfig/kubernetes_openstack_config <<EOF
+[Global]
+auth-url=$AUTH_URL
+Username=$USERNAME
+Password=$PASSWORD
+tenant-name=$TENANT_NAME
+domain-name=$TENANT_DOMAIN
 EOF
 
 for service in kubelet kube-proxy; do

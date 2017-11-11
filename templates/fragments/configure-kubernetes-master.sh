@@ -4,6 +4,9 @@
 
 echo "configuring kubernetes (master)"
 
+# Get kubernetes version
+K8S_VERSION=$(rpm -q --queryformat "%{VERSION}" kubernetes-common)
+
 # Generate ServiceAccount key if needed
 SERVICE_ACCOUNT_KEY="/var/lib/kubernetes/serviceaccount.key"
 if [[ ! -f "${SERVICE_ACCOUNT_KEY}" ]]; then
@@ -41,25 +44,14 @@ sed -i '
 sed -i '
     /^KUBE_API_ADDRESS=/ s|=.*|="--advertise-address='"$KUBE_NODE_IP"' --insecure-bind-address=0.0.0.0 --bind-address=0.0.0.0"|
     /^KUBE_SERVICE_ADDRESSES=/ s|=.*|="--service-cluster-ip-range='"$PORTAL_NETWORK_CIDR"'"|
-    /^KUBE_API_ARGS=/ s|=.*|="'"$KUBE_API_ARGS"'"|
+    /^KUBE_API_ARGS=/ s|=.*|="'"$KUBE_API_ARGS"' --cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"|
     /^KUBE_ETCD_SERVERS=/ s/=.*/="--etcd-servers=http:\/\/127.0.0.1:2379"/
     /^KUBE_ADMISSION_CONTROL=/ s/=.*/="--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota"/
 ' /etc/kubernetes/apiserver
 
-cat >> /etc/kubernetes/apiserver <<EOF
-#Uncomment the following line to enable Load Balancer feature
-#KUBE_API_ARGS="--runtime-config=api/all=true --cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"
-EOF
-
 sed -i '
-    /^KUBE_CONTROLLER_MANAGER_ARGS=/ s|=.*|="--service-account-private-key-file='"$SERVICE_ACCOUNT_KEY"' --leader-elect=true --cluster-name=kubernetes --cluster-cidr='"$FLANNEL_NETWORK_CIDR"'"|
+    /^KUBE_CONTROLLER_MANAGER_ARGS=/ s|=.*|="--service-account-private-key-file='"$SERVICE_ACCOUNT_KEY"' --leader-elect=true --cluster-name=kubernetes --cluster-cidr='"$FLANNEL_NETWORK_CIDR"' --cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"|
 ' /etc/kubernetes/controller-manager
-
-cat >> /etc/kubernetes/controller-manager <<EOF
-
-#Uncomment the following line to enable Kubernetes Load Balancer feature
-#KUBE_CONTROLLER_MANAGER_ARGS="--cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"
-EOF
 
 # Generate a the configuration for Kubernetes services to talk to OpenStack Neutron
 cat > /etc/sysconfig/kubernetes_openstack_config <<EOF
@@ -68,13 +60,21 @@ auth-url=$AUTH_URL
 Username=$USERNAME
 Password=$PASSWORD
 tenant-name=$TENANT_NAME
+domain-name=$TENANT_DOMAIN
 [LoadBalancer]
+lb-version=v2
 subnet-id=$CLUSTER_SUBNET
 create-monitor=yes
 monitor-delay=1m
 monitor-timeout=30s
 monitor-max-retries=3
 EOF
+
+# If Kubernetes version is 1.7.x, add blockstorage version
+if echo $K8S_VERSION | grep -q "^1\.7"; then
+    echo "[BlockStorage]" >> /etc/sysconfig/kubernetes_openstack_config
+    echo "bs-version=v2" >> /etc/sysconfig/kubernetes_openstack_config
+fi
 
 for service in kube-apiserver kube-scheduler kube-controller-manager; do
     echo "activating $service service"
