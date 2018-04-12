@@ -263,6 +263,7 @@ resources:
             "$TENANT_NAME": {get_param: tenant_name}
             "$TENANT_DOMAIN": {get_param: tenant_domain}
             "$CLUSTER_SUBNET": {get_param: fixed_subnet}
+            "$FLOATING_SUBNET": {get_param: external_network}
             "$TLS_DISABLED": {get_param: tls_disabled}
             "$KUBE_VERSION": {get_param: kube_version}
             "$CLUSTER_UUID": {get_param: cluster_uuid}

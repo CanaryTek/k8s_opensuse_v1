@@ -64,6 +64,7 @@ domain-name=$TENANT_DOMAIN
 [LoadBalancer]
 lb-version=v2
 subnet-id=$CLUSTER_SUBNET
+floating-network-id=$FLOATING_SUBNET
 create-monitor=yes
 monitor-delay=1m
 monitor-timeout=30s

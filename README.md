@@ -6,7 +6,7 @@ It enhances the original SUSE driver with the following changes
 
 - Correctly configure Kubernetes to "talk" to OpenStack, so it can create OS LoadBalancers for Kubernetes services and use cinder volumes
 - It works with SUSE's provided image openstack-magnum-k8s-image that includes kubernetes 1.3.10 (quite outdated)
-- It also works with author's provided openSUSE image that includes Kubernetes 1.7.7 (read below)
+- It also works with author's provided openSUSE image that includes Kubernetes 1.8.5 (read below)
 
 ## Installation
 
@@ -64,16 +64,18 @@ magnum cluster-create --name k8s_cluster --cluster-template k8s_template_suse \
 --master-count 1 --node-count 3
 ```
 
-## Usage with author's provided image (Kubernetes version 1.7.7)
+## Usage with author's provided image (Kubernetes version 1.8)
 
-This setup uses a custom image created with openSUSE Leap 42.3 with Kubernetes 1.7.7
+This setup uses a custom image created with openSUSE Leap 42.3 with Kubernetes 1.8
 
 This image is created using openSUSE's kiwi and OBS and is hosted at https://build.opensuse.org/package/show/home:kuko:images/openSUSE-Leap-42.3-Magnum-Kubernetes-1.7
 
-  * Download the Kubernetes 1.7.7 image
+Yes, the repo has a 1.7 in it's name, but now it's really Kubernetes 1.8. I will create a new project with no version in it's name...
+
+  * Download the Kubernetes 1.8 image
 
 ```
-wget "https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap-42.3-Magnum-Kubernetes-1.7.x86_64-1.42.3-mit-Build2.2.qcow2"
+wget "https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap-42.3-Magnum-Kubernetes-1.7.x86_64-1.42.3-mit-Build3.29.qcow2"
 ```
 
   * Create the image
@@ -83,7 +85,7 @@ openstack image create leap-k8s-magnum \
 --public --disk-format qcow2 \
 --property os_distro='opensuse' \
 --container-format bare \
---file openSUSE-Leap-42.3-Magnum-Kubernetes-1.7.x86_64-1.42.3-mit-Build2.1.qcow2
+--file openSUSE-Leap-42.3-Magnum-Kubernetes-1.7.x86_64-1.42.3-mit-Build3.29.qcow2
 ```
 
   * Create the flavor (adjust to your needs)
@@ -97,7 +99,7 @@ openstack flavor create --public m1.magnum --id 9 --ram 1024 --disk 10 --vcpus 1
     * You may also want to change the docker-volume-size. It's the size used to store docker containers
 
 ```
-magnum cluster-template-create --name k8s_template_suse_k8s_1.7 \
+magnum cluster-template-create --name k8s_template_suse_k8s_1.8 \
 --image-id leap-k8s-magnum \
 --keypair-id default \
 --external-network-id floating \
@@ -115,7 +117,7 @@ magnum cluster-template-create --name k8s_template_suse_k8s_1.7 \
   * Create cluster
 
 ```
-magnum cluster-create --name k8s_cluster --cluster-template k8s_template_suse_k8s_1.7 \
+magnum cluster-create --name k8s_cluster --cluster-template k8s_template_suse_k8s_1.8 \
 --master-count 1 --node-count 3
 ```
 

@@ -29,7 +29,7 @@ sed -i '
     /^KUBELET_ADDRESS=/ s/=.*/="--address=0.0.0.0"/
     /^KUBELET_HOSTNAME=/ s/=.*/=""/
     /^KUBELET_API_SERVER=/ s|=.*|="--api-servers='"$KUBE_MASTER_URI"'"|
-    /^KUBELET_ARGS=/ s|=.*|="--node-ip='"$myip"' --api-servers='"$KUBE_MASTER_URI"' --container-runtime=docker '"$KUBE_CONFIG"' --cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"|
+    /^KUBELET_ARGS=/ s|=.*|="--node-ip='"$myip"' --container-runtime=docker '"$KUBE_CONFIG"' --cloud-config=/etc/sysconfig/kubernetes_openstack_config --cloud-provider=openstack"|
 ' /etc/kubernetes/kubelet
 
 sed -i '
